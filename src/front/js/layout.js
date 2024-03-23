@@ -1,40 +1,63 @@
 import React from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import ScrollToTop from "./component/scrollToTop";
-import { BackendURL } from "./component/backendURL";
-
-import { Home } from "./pages/home";
-import { Demo } from "./pages/demo";
-import { Single } from "./pages/single";
+import { useEffect, useState } from "react";
 import injectContext from "./store/appContext";
 
+import { Home } from "./pages/home";
 import { Navbar } from "./component/navbar";
 import { Footer } from "./component/footer";
+import { AddContact } from "./pages/AddContact";
+import { Contacts } from "./pages/Contact";
+
+export const AppContext = React.createContext();
+
 
 //create your first component
 const Layout = () => {
-    //the basename is used when your project is published in a subdirectory and not in the root of the domain
-    // you can set the basename on the .env file located at the root of this project, E.g: BASENAME=/react-hello-webapp/
-    const basename = process.env.BASENAME || "";
 
-    if(!process.env.BACKEND_URL || process.env.BACKEND_URL == "") return <BackendURL/ >;
+	const [userInput, setUserInput] = useState({})
 
-    return (
-        <div>
-            <BrowserRouter basename={basename}>
-                <ScrollToTop>
-                    <Navbar />
-                    <Routes>
-                        <Route element={<Home />} path="/" />
-                        <Route element={<Demo />} path="/demo" />
-                        <Route element={<Single />} path="/single/:theid" />
-                        <Route element={<h1>Not found!</h1>} />
-                    </Routes>
-                    <Footer />
-                </ScrollToTop>
-            </BrowserRouter>
-        </div>
-    );
+	const [contacts, setContacts] = useState([]);
+	const [currentContact, setCurrentContact] = useState([]);
+
+	const myGetFetch = () => {
+
+		fetch('https://playground.4geeks.com/apis/fake/contact/agenda/Leos')
+			.then(response => {
+				let contentType = response.headers.get("content-type");
+				if (contentType && contentType.includes("application/json")) {
+					return response.json();
+				}
+				throw new TypeError("Sorry, There's no JSON here!");
+			})
+			.then(jsonifiedResponse => { setContacts(jsonifiedResponse) })
+			.catch(error => console.log(error));
+	}
+
+	useEffect(() => {
+		myGetFetch()
+	}, [])
+	const basename = process.env.BASENAME || "";
+
+	return (
+		<div>
+			<AppContext.Provider value={{ contacts, setContacts, myGetFetch, userInput, setUserInput, currentContact, setCurrentContact }}>
+				<BrowserRouter basename={basename}>
+					<ScrollToTop>
+						<Navbar />
+						<Routes>
+							<Route path="/" element={<Home />} />
+							<Route path="/addcontact" element={<AddContact />} />
+							<Route path="/contacts" element={<Contacts />} />
+							<Route path="*" element={<h1>Not found!</h1>} />
+						</Routes>
+						<Footer />
+					</ScrollToTop>
+				</BrowserRouter>
+			</AppContext.Provider>
+		</div>
+	);
 };
 
 export default injectContext(Layout);
