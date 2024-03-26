@@ -3,12 +3,13 @@ import { withRouter } from "react-router-dom";
 import PropTypes from "prop-types";
 import MikePhoto from "../../img/m101.jpg";
 import { AppContext } from "../layout";
+import { Agenda } from "../pages/Agenda";
 
 
 
 export const ContactCard = props => {
 
-    const { contacts, setContacts,currentContact,setCurrentContact } = useContext(AppContext);
+    const { currentAgenda, contacts, setContacts, currentContact, setCurrentContact } = useContext(AppContext);
 
     return (
         <>
@@ -20,10 +21,10 @@ export const ContactCard = props => {
                     <div className="col-12 col-sm-6 col-md-9 text-center text-sm-left">
                         <div className=" float-right" >
                             <button className="btn">
-                                <i className="fas fa-pencil-alt mr-3" onClick={() =>{ 
-                            props.onEdit()
-                            setCurrentContact(props.contact)
-                            }}/>
+                                <i className="fas fa-pencil-alt mr-3" onClick={() => {
+                                    // props.onEdit()
+                                    setCurrentContact(props.contact)
+                                }} />
                             </button>
 
                             <button className="btn" onClick={() => props.onDelete()}>

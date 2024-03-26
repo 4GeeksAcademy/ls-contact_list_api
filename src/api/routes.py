@@ -33,7 +33,7 @@ def get_user():
     if result:
     #    data_back= single_user.serialize() 
         response_body = {
-        "message": f"Welcome {result[0]['username']}",
+        "good_message": f"Welcome {result[0]['username']}",
         "data": result
         }
     else:
@@ -41,11 +41,11 @@ def get_user():
         check_if_exist_result = list(map(lambda x: x.serialize(),check_if_exist))
         if check_if_exist_result:
             response_body = {
-            "message": "Wrong username or password"
+            "error_message": "Wrong username or password"
             }
         else:
             response_body = {
-            "message": "You don't have account please make a new account"
+            "error_message": "You don't have account please make a new account"
             }
 
     return jsonify(response_body), 200

@@ -4,17 +4,21 @@ import ScrollToTop from "./component/scrollToTop";
 import { useEffect, useState } from "react";
 import injectContext from "./store/appContext";
 
-import { Home } from "./pages/home";
 import { Navbar } from "./component/navbar";
 import { Footer } from "./component/footer";
 import { AddContact } from "./pages/AddContact";
 import { Contacts } from "./pages/Contact";
-
+import { Login } from "./pages/login";
+import { Agenda } from "./pages/Agenda";
+import { CustomizeRule } from "webpack-merge";
 export const AppContext = React.createContext();
 
 
 //create your first component
 const Layout = () => {
+
+	const [currentUser, setCurrentUser] = useState({})
+	const [currentAgenda, setCurrentAgenda] = useState({})
 
 	const [userInput, setUserInput] = useState({})
 
@@ -23,7 +27,7 @@ const Layout = () => {
 
 	const myGetFetch = () => {
 
-		fetch('https://playground.4geeks.com/apis/fake/contact/agenda/Leos')
+		fetch(`https://scaling-space-acorn-977rjvgv76wxcpvp9-3000.app.github.dev/api/${currentAgenda.id}/contacts`)
 			.then(response => {
 				let contentType = response.headers.get("content-type");
 				if (contentType && contentType.includes("application/json")) {
@@ -31,25 +35,25 @@ const Layout = () => {
 				}
 				throw new TypeError("Sorry, There's no JSON here!");
 			})
-			.then(jsonifiedResponse => { setContacts(jsonifiedResponse) })
+			.then(jsonifiedResponse => { print(jsonifiedResponse) })
 			.catch(error => console.log(error));
 	}
+	
 
-	useEffect(() => {
-		myGetFetch()
-	}, [])
+
 	const basename = process.env.BASENAME || "";
 
 	return (
 		<div>
-			<AppContext.Provider value={{ contacts, setContacts, myGetFetch, userInput, setUserInput, currentContact, setCurrentContact }}>
+			<AppContext.Provider value={{ contacts, setContacts, myGetFetch, userInput, currentContact, setCurrentContact, setUserInput, currentUser, setCurrentUser, currentAgenda, setCurrentAgenda }}>
 				<BrowserRouter basename={basename}>
 					<ScrollToTop>
 						<Navbar />
 						<Routes>
-							<Route path="/" element={<Home />} />
+							<Route path="/" element={<Login />} />
 							<Route path="/addcontact" element={<AddContact />} />
-							<Route path="/contacts" element={<Contacts />} />
+							<Route path="/agendas" element={<Agenda />} />
+							<Route path="/contacts/:agendaid" element={<Contacts />} />
 							<Route path="*" element={<h1>Not found!</h1>} />
 						</Routes>
 						<Footer />

@@ -17,26 +17,39 @@ export const Contacts = () => {
 		contact: {
 
 			address: "",
-			agenda_slug
-				:
-				"Leos",
+			agenda_id: currentAgenda,
 			email
 				:
 				"",
 			full_name
 				:
 				"",
-			id
-				:
-				0,
 			phone
 				: ""
 
 		}
 	});
-	const { contacts, setContacts } = useContext(AppContext);
+	const { contacts, setContacts, myGetFetch, currentAgenda, setCurrentContact, userInput } = useContext(AppContext);
+	useEffect(() => {
+		fetch(`https://scaling-space-acorn-977rjvgv76wxcpvp9-3001.app.github.dev/api/${currentAgenda}/contacts`)
+			.then(response => {
+				let contentType = response.headers.get("content-type");
+				if (contentType && contentType.includes("application/json")) {
+					return response.json();
+				}
+				throw new TypeError("Sorry, There's no JSON here!");
+			})
+			.then(jsonifiedResponse => {
+				setContacts(jsonifiedResponse.data)
+			})
+			.catch(error => console.log(error));
+	}, [currentAgenda, userInput]);
+
+
 
 	return (
+
+
 		<div className="container">
 			<div>
 				<p className="text-right my-3">
@@ -59,7 +72,7 @@ export const Contacts = () => {
 				</div>
 			</div>
 			<Modal show={state.showModal} id={state.id} onClose={() => setState({ showModal: false })} />
-			
+
 			<EditModal show={editState.showModal}
 				onClose={() => setEditState({ ...editState, showModal: false })} />
 		</div>
